@@ -99,6 +99,9 @@ public class HelloWorldApplet extends BaseApplet {
         // good practice
         if(selectingApplet()) return;
         byte[] buffer = apdu.getBuffer();
+        
+        System.out.println("process(APDU apdu)");
+        
         // Now determine the requested instruction:
         switch (buffer[ISO7816.OFFSET_INS]) {
             case SAY_HELLO_INS:

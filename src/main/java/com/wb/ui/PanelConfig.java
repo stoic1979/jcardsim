@@ -28,10 +28,9 @@ public class PanelConfig extends JPanel {
 	
 	
 	public PanelConfig() {
-		setLayout(new GridBagLayout());
 		
 		textField  = new JTextField();
-		fileChoose = new JButton("Choose File");	
+		fileChoose = new JButton("Browse Config");	
 
 		textField.setPreferredSize(new Dimension(200, 30));
         fileChoose.setPreferredSize(new Dimension(200,30));

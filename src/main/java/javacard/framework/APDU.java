@@ -264,7 +264,7 @@ public final class APDU {
     // reference to this
     private static APDU thisAPDU;
 
-    APDU() {
+    public APDU() {
         buffer = JCSystem.makeTransientByteArray(BUFFER_SIZE, JCSystem.CLEAR_ON_RESET);
         ramVars = JCSystem.makeTransientByteArray(RAM_VARS_LENGTH, JCSystem.CLEAR_ON_RESET);
         flags = JCSystem.makeTransientBooleanArray(FLAGS_LENGTH, JCSystem.CLEAR_ON_RESET);

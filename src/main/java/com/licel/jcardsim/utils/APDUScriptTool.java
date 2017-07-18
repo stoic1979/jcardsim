@@ -116,7 +116,7 @@ public class APDUScriptTool {
 
     }
 
-    private static ArrayList<CommandAPDU> parseAPDUStream(InputStreamReader in) throws IOException, ParseException {
+    public static ArrayList<CommandAPDU> parseAPDUStream(InputStreamReader in) throws IOException, ParseException {
         ArrayList<CommandAPDU> apduCommands = new ArrayList();
         BufferedReader br = new BufferedReader(in);
         String line = br.readLine();
@@ -188,7 +188,7 @@ public class APDUScriptTool {
         return new CommandAPDU(cla, ins, p0, p1, data, le);
     }
 
-    private static String commandToStr(CommandAPDU command) {
+    public static String commandToStr(CommandAPDU command) {
         StringBuilder sb = new StringBuilder();
         sb.append("CLA: ").append(toHex(command.getCLA())).append(", ");
         sb.append("INS: ").append(toHex(command.getINS())).append(", ");
@@ -202,7 +202,7 @@ public class APDUScriptTool {
         return sb.toString();
     }
 
-    private static String responseToStr(ResponseAPDU response) {
+    public static String responseToStr(ResponseAPDU response) {
         StringBuilder sb = new StringBuilder();
         sb.append("Le: ").append(toHex(response.getNr())).append(", ");
         byte[] data = response.getData();

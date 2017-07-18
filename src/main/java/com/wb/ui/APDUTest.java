@@ -26,19 +26,20 @@ import javax.smartcardio.TerminalFactory;
 
 import com.licel.jcardsim.smartcardio.JCardSimProvider;
 
-public class APDUScriptTool {
+public class APDUTest {
 	static boolean outputOn = true;
 
     public static void main(String args[]) throws FileNotFoundException, IOException, NoSuchAlgorithmException, CardException {
-        if (args.length < 2) {
-            System.out.println("Usage: java com.licel.jcardsim.utils.APDUScriptTool <jcardsim.cfg> <apdu script> [out file]");
-            System.exit(-1);
-        }
+
+    	String cfgFilePath = "/home/leo/work/simulator/jcardsim/jcardsim.cfg";
+    	String apduFilePath = "/home/leo/work/simulator/jcardsim/apdu.script";
+    	
+    	
         Properties cfg = new Properties();
         // init Simulator
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(args[0]);
+            fis = new FileInputStream(cfgFilePath);
             cfg.load(fis);
         } catch (Throwable t) {
             System.err.println("Unable to load configuration " + args[0] + " due to: " + t.getMessage());
@@ -49,8 +50,8 @@ public class APDUScriptTool {
             }
         }
 
-        PrintStream out = args.length == 3 ? new PrintStream(args[2]) : System.out;
-        fis = new FileInputStream(args[1]);
+        PrintStream out = System.out;
+        fis = new FileInputStream(apduFilePath);
         try {
             executeCommands(cfg, fis, out);
         } catch (Throwable t) {
@@ -60,11 +61,9 @@ public class APDUScriptTool {
             if (fis != null) {
                 fis.close();
             }
-            if (args.length == 3 && out != null) {
-                out.close();
-            }
+           
+            out.close();        
         }
-
 
     }
 
@@ -77,7 +76,7 @@ public class APDUScriptTool {
             System.setProperty(propertyName, cfg.getProperty(propertyName));
         }
 
-        ArrayList<CommandAPDU> commands = APDUScriptTool.parseAPDUStream(new InputStreamReader(commandsStream));
+        ArrayList<CommandAPDU> commands = APDUTest.parseAPDUStream(new InputStreamReader(commandsStream));
         if (Security.getProvider("jCardSim") == null) {
             JCardSimProvider provider = new JCardSimProvider();
             Security.addProvider(provider);
@@ -96,11 +95,14 @@ public class APDUScriptTool {
         }
         Card jcsCard = jcsTerminal.connect("T=0");
         CardChannel jcsChannel = jcsCard.getBasicChannel();
+        
+        System.out.print("Executing " + commands.size() + " APDU commands\n");
+        
         if (commands.size() > 0) {
             for (int i = 0; i < commands.size(); i++) {
                 CommandAPDU command = commands.get(i);
                 ResponseAPDU response = jcsChannel.transmit(command);
-                String dump = APDUScriptTool.commandToStr(command) + APDUScriptTool.responseToStr(response);
+                String dump = APDUTest.commandToStr(command) + APDUTest.responseToStr(response);
                 if(out == null) {
                     System.out.println(dump);
                 } else {
@@ -111,7 +113,7 @@ public class APDUScriptTool {
 
     }
 
-    private static ArrayList<CommandAPDU> parseAPDUStream(InputStreamReader in) throws IOException, ParseException {
+    static ArrayList<CommandAPDU> parseAPDUStream(InputStreamReader in) throws IOException, ParseException {
         ArrayList<CommandAPDU> apduCommands = new ArrayList();
         BufferedReader br = new BufferedReader(in);
         String line = br.readLine();
@@ -183,7 +185,7 @@ public class APDUScriptTool {
         return new CommandAPDU(cla, ins, p0, p1, data, le);
     }
 
-    private static String commandToStr(CommandAPDU command) {
+    static String commandToStr(CommandAPDU command) {
         StringBuilder sb = new StringBuilder();
         sb.append("CLA: ").append(toHex(command.getCLA())).append(", ");
         sb.append("INS: ").append(toHex(command.getINS())).append(", ");
@@ -197,7 +199,7 @@ public class APDUScriptTool {
         return sb.toString();
     }
 
-    private static String responseToStr(ResponseAPDU response) {
+    static String responseToStr(ResponseAPDU response) {
         StringBuilder sb = new StringBuilder();
         sb.append("Le: ").append(toHex(response.getNr())).append(", ");
         byte[] data = response.getData();
