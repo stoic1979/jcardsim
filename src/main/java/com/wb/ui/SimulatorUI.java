@@ -143,19 +143,17 @@ public class SimulatorUI extends JFrame implements APDUListener {
 
 
 	@Override
-	public void handleAPDU(CommandAPDU apdu) {
-
-		System.out.println("[SimulatorUI] got APDU :: " + apdu);
+	public void handleAPDU(ArrayList<CommandAPDU> commands) {
 
 		try {
-			runAPDUCommand(apdu);
+			runAPDUCommand(commands);
 		} catch(Exception e) {
 			System.out.println("[SimulatorUI] handleAPDU() got Exception :: " + e);
 		}
 
 	}
 
-	public static void runAPDUCommand(CommandAPDU command) throws NoSuchAlgorithmException, CardException{
+	public static void runAPDUCommand(ArrayList<CommandAPDU> commands) throws NoSuchAlgorithmException, CardException{
 
 		String cfgFilePath = "/home/leo/work/simulator/jcardsim/jcardsim.cfg";
 
@@ -212,6 +210,8 @@ public class SimulatorUI extends JFrame implements APDUListener {
 		Card jcsCard = jcsTerminal.connect("T=0");
 		CardChannel jcsChannel = jcsCard.getBasicChannel();
 
+		 for (int i = 0; i < commands.size(); i++) {
+			 CommandAPDU command = commands.get(i);
 		ResponseAPDU response = jcsChannel.transmit(command);
 
 		System.out.println("[SimulatorUI] sending command on jcs channel");
@@ -219,9 +219,11 @@ public class SimulatorUI extends JFrame implements APDUListener {
 
 		System.out.println("\n[SimulatorUI] Response:\n " + APDUScriptTool.responseToStr(response));
 
+		String dump = APDUTest.commandToStr(command) + APDUTest.responseToStr(response);
+		
+		System.out.println("\n[SimulatorUI] dump:\n " + dump);
 
-
-
+		 }
 	}//runAPDUCommand
 
 

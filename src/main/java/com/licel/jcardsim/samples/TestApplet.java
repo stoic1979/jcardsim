@@ -26,6 +26,7 @@ public class TestApplet extends BaseApplet {
      */
     protected TestApplet(byte[] bArray, short bOffset, byte bLength) {
 
+    	System.out.println("--- TestApplet ---");
         register();
     }    
 
@@ -38,6 +39,7 @@ public class TestApplet extends BaseApplet {
      */
     public static void install(byte[] bArray, short bOffset, byte bLength)
             throws ISOException {
+    	System.out.println("--- install ---");
         new TestApplet(bArray, bOffset,bLength);
     }
 
@@ -45,6 +47,10 @@ public class TestApplet extends BaseApplet {
      * This method is called each time the applet receives APDU.
      */
     public void process(APDU apdu) {
+    	
+    	//System.out.println("--- process ---");
+
+    	
         // good practice
         if(selectingApplet()) return;
         byte[] buffer = apdu.getBuffer();
