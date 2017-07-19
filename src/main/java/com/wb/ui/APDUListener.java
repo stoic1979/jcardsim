@@ -7,6 +7,6 @@ import javax.smartcardio.CommandAPDU;
 
 public interface APDUListener {
 	
-	public void handleAPDU(ArrayList<CommandAPDU> commands);
+	public String handleAPDU(CommandAPDU command);
 
 }//APDUListener

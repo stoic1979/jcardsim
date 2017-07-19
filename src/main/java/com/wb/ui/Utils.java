@@ -23,10 +23,10 @@ public class Utils {
         }
         int cla = parseNumber(bytes[0]);
         int ins = parseNumber(bytes[1]);
-        int p0 = parseNumber(bytes[2]);
-        int p1 = parseNumber(bytes[3]);
-        int lc = parseNumber(bytes[4]);
-        int le = parseNumber(bytes[bytes.length - 1]);
+        int p0  = parseNumber(bytes[2]);
+        int p1  = parseNumber(bytes[3]);
+        int lc  = parseNumber(bytes[4]);
+        int le  = parseNumber(bytes[bytes.length - 1]);
         // check lc
         if (lc + 6 > bytes.length) {
             throw new ParseException("Unexpected end of C-APDU: " + command, lc + 5);

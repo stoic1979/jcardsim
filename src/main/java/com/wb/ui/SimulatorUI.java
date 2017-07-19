@@ -49,13 +49,15 @@ import com.licel.jcardsim.utils.APDUScriptTool;
 public class SimulatorUI extends JFrame implements APDUListener {
 	JLabel label1; 
 
+	CardChannel jcsChannel;
+
 	public static void main(String[] args){
 		SimulatorUI swingContainerDemo = new SimulatorUI(); 
 		swingContainerDemo.setJFrame();
 	}
 	public void setJFrame()
 	{
-		setSize(500, 700);
+		setSize(800, 640);
 
 		menuBar();
 
@@ -83,8 +85,15 @@ public class SimulatorUI extends JFrame implements APDUListener {
 
 		add(tabbedPane);
 
-		setResizable(false);
+		//setResizable(false);
 		setVisible(true);
+
+		try {
+			initializeTerminal() ;
+		} catch(Exception e) {
+			System.out.println("[SimulatorUI] got Exception :: " + e);
+			e.printStackTrace();
+		}
 
 
 	}//setJFrame 
@@ -139,30 +148,37 @@ public class SimulatorUI extends JFrame implements APDUListener {
 
 		setJMenuBar(jMenuBAR);
 
+
 	}//menuBar()
 
 
 	@Override
-	public void handleAPDU(ArrayList<CommandAPDU> commands) {
+	public String handleAPDU(CommandAPDU command) {
 
+		String ret = "";
 		try {
-			runAPDUCommand(commands);
+			ret = runAPDUCommand(command);
 		} catch(Exception e) {
 			System.out.println("[SimulatorUI] handleAPDU() got Exception :: " + e);
+			e.printStackTrace();
+			ret = "EXCEPTION :: " + e;
 		}
+		
+		return ret;
 
 	}
 
-	public static void runAPDUCommand(ArrayList<CommandAPDU> commands) throws NoSuchAlgorithmException, CardException{
+	private void initializeTerminal()  throws NoSuchAlgorithmException, CardException {
+
 
 		String cfgFilePath = "/home/leo/work/simulator/jcardsim/jcardsim.cfg";
-
-		System.out.println("[SimulatorUI] runAPDUCommand...");
 
 		//-----------------------------------------------------------
 		//      LOADING CONFIG FILE   
 		//-----------------------------------------------------------
+
 		Properties cfg = new Properties();
+
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(cfgFilePath);
@@ -172,6 +188,7 @@ public class SimulatorUI extends JFrame implements APDUListener {
 			System.exit(-1);
 		} 
 		System.out.println("[SimulatorUI] Loaded Config file");
+
 
 		Enumeration keys = cfg.propertyNames();
 		while(keys.hasMoreElements()) {
@@ -185,47 +202,55 @@ public class SimulatorUI extends JFrame implements APDUListener {
 		if (Security.getProvider("jCardSim") == null) {
 			JCardSimProvider provider = new JCardSimProvider();
 			Security.addProvider(provider);
+
 		}
+
 
 		//-----------------------------------------------------------
 		//      Creating Terminal
 		//-----------------------------------------------------------    
-		TerminalFactory tf = TerminalFactory.getInstance("jCardSim", null);
-		CardTerminals ct = tf.terminals();
-		List<CardTerminal> list = ct.list();
+		TerminalFactory tf       = TerminalFactory.getInstance("jCardSim", null);
+		CardTerminals ct         = tf.terminals();
+		List<CardTerminal> list  = ct.list();
 		CardTerminal jcsTerminal = null;
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getName().equals("jCardSim.Terminal")) {
 				jcsTerminal = list.get(i);
+				System.out.println(" " + list.get(i));
 				break;
 			}
 		}
-		
 		System.out.println("[SimulatorUI] Created Terminal");
 
 		//-----------------------------------------------------------
 		//      RUNNING APDU Command
 		//-----------------------------------------------------------
-
 		Card jcsCard = jcsTerminal.connect("T=0");
-		CardChannel jcsChannel = jcsCard.getBasicChannel();
+		jcsChannel = jcsCard.getBasicChannel();
+	}
 
-		 for (int i = 0; i < commands.size(); i++) {
-			 CommandAPDU command = commands.get(i);
+	public String runAPDUCommand(CommandAPDU command) throws NoSuchAlgorithmException, CardException{
+
+		System.out.println("[SimulatorUI] runAPDUCommand...");
+
+
 		ResponseAPDU response = jcsChannel.transmit(command);
 
+
 		System.out.println("[SimulatorUI] sending command on jcs channel");
-		System.out.println("\n[SimulatorUI] Command:\n " + APDUScriptTool.commandToStr(command) );
+
+		System.out.println("\n[SimulatorUI] Command:\n "  + APDUScriptTool.commandToStr(command) );
 
 		System.out.println("\n[SimulatorUI] Response:\n " + APDUScriptTool.responseToStr(response));
 
-		String dump = APDUTest.commandToStr(command) + APDUTest.responseToStr(response);
+		String dump = APDUTest.commandToStr(command)      + APDUTest.responseToStr(response);
+
+		System.out.println("\n[SimulatorUI] dump:\n "     + dump);
 		
-		System.out.println("\n[SimulatorUI] dump:\n " + dump);
+		return dump;
 
-		 }
+
 	}//runAPDUCommand
-
 
 }//SimulatorUI
 
