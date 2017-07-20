@@ -51,8 +51,6 @@ public class PanelAPDU extends JPanel implements ActionListener {
 	 
 	  byte[] values = new byte[] {(byte)0xB0,(byte)0xB0,(byte)0xB0,(byte)0xB0,(byte)0xB0};
 	  
-	  
-	  
 	  JLabel     lbAPDU;
 	  JTextField txtAPDU;
 	  
@@ -60,17 +58,10 @@ public class PanelAPDU extends JPanel implements ActionListener {
       JPanel     mainPanel,centerPanel,northPanel,southPanel;
       JTextArea  txtResult;
       String     txtOutput = "Output";
-      
-      int  cla = 0x80;
-      int  ins = 0xb8;
-      int  p1  = 0x00;
-      int  p2  = 0x00; 
-      int  LC  = 0x10;
+
       
       
       
-      byte[] data = new byte[] {(byte) 0xEF, (byte) 0x08};
-      int le  = 0x0D;
       
       private APDUListener apduListener; 
       
@@ -103,28 +94,28 @@ public class PanelAPDU extends JPanel implements ActionListener {
 
             
             
-            northPanel.setPreferredSize(new Dimension(400,200));
+            northPanel.setPreferredSize(new Dimension(1000,200));
             northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
  
 
             northPanel.add(lbAPDU);
             northPanel.add(txtAPDU);
           
-           centerPanel = new JPanel();
-           centerPanel.add(btnSend);
-           centerPanel.add(btnReset);
+            centerPanel = new JPanel();
+            centerPanel.add(btnSend);
+            centerPanel.add(btnReset);
            
-           southPanel = new JPanel();
-           southPanel.setPreferredSize(new Dimension(400,200));
-           southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.Y_AXIS));
-           btnClear.setAlignmentX(Component.CENTER_ALIGNMENT);
-           btnClear.add(Box.createVerticalStrut(20));
+            southPanel = new JPanel();
+            southPanel.setPreferredSize(new Dimension(1000,400));
+            southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.Y_AXIS));
+            btnClear.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btnClear.add(Box.createVerticalStrut(20));
 
-           southPanel.add(txtResult);
-           southPanel.add(btnClear);
+            southPanel.add(txtResult);
+            southPanel.add(btnClear);
 
-  	       mainPanel = new JPanel();
-           mainPanel.setBackground(Color.green);
+  	        mainPanel = new JPanel();
+            mainPanel.setBackground(Color.green);
 
 
            mainPanel.setLayout(new BorderLayout());
@@ -162,11 +153,7 @@ public class PanelAPDU extends JPanel implements ActionListener {
 				apduCommands.add( Utils.parseAPDUCommand(apduNOP));
 				apduCommands.add( Utils.parseAPDUCommand(apduHello) );
 				
-				
-				
-//			    txtAPDU.setText(apduCommands.toString() + " ");
-				
-			    String dump = apduListener.handleAPDU(Utils.parseAPDUCommand(txtAPDU.getText()));
+				String dump = apduListener.handleAPDU(Utils.parseAPDUCommand(txtAPDU.getText()));
 			    txtResult.setText(txtResult.getText() + " \n" + dump);  
                } catch(Exception e) {
 				System.out.println("[PanelAPDU] actionPerformed() got Exception :: " + e);

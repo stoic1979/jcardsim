@@ -46,13 +46,13 @@ import com.licel.jcardsim.smartcardio.JCardSimProvider;
 import com.licel.jcardsim.utils.APDUScriptTool;
 
 
-public class SimulatorUI extends JFrame implements APDUListener {
+public class SimulatorUIOld extends JFrame implements APDUListener {
 	JLabel label1; 
 
 	CardChannel jcsChannel;
 
 	public static void main(String[] args){
-		SimulatorUI swingContainerDemo = new SimulatorUI(); 
+		SimulatorUIOld swingContainerDemo = new SimulatorUIOld(); 
 		swingContainerDemo.setJFrame();
 	}
 	public void setJFrame()
@@ -60,9 +60,7 @@ public class SimulatorUI extends JFrame implements APDUListener {
 		setSize(800, 640);
 
 		menuBar();
-
-
-		JTabbedPane tabbedPane = new JTabbedPane();
+      	JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setPreferredSize(new Dimension(200, 30));
 		//        UIManager.getLookAndFeelDefaults().put("TabbedPane:TabbedPaneTab.contentMargins", new Insets(10, 100, 0, 0));
 
